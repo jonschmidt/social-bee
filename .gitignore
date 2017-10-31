@@ -1,3 +1,9 @@
+#pycharm
+.idea
+
+#google
+service-account.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -86,6 +92,7 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
+env3/
 
 # Spyder project settings
 .spyderproject
