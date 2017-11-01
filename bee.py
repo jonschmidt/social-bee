@@ -31,7 +31,6 @@ def fchan(currencies):
     b = get('https://boards.4chan.org/biz')
     for k in currencies.keys():
         occurrences = sumOccurrences(b, currencies[k].get("CurrencyLong"))
-        if occurrences > 0 : print(occurrences)
         counts[k] = occurrences + sumOccurrences(b, currencies[k].get("Currency"))
 
     for x in range(2, 10):
