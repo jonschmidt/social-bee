@@ -100,10 +100,10 @@ rd = rddt(currencies)
 for key in sorted(rd.items(), key=operator.itemgetter(1), reverse=True):
     if key[1] > 0:
         print("[" + key[0] + "] " + str(key[1]))
-#
-#
-# doc_ref.set({
-#             'timestamp': datetime.datetime.now(),
-#             'reddit': rd,
-#             'fourchan': fc
-#         })
+
+
+doc_ref.set({
+            'timestamp': datetime.datetime.now(),
+            'reddit': rd,
+            'fourchan': fc
+        })
