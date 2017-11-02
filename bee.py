@@ -10,6 +10,13 @@ import datetime
 import os
 import requests  # To make HTTP requests
 
+# settings.py
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
 
 def get(url):
     print('Grabbing ' + url)
@@ -64,9 +71,7 @@ def rddt(currencies):
     return counts
 
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './service-account.json'
-
-cred = credentials.Certificate('service-account.json')
+cred = credentials.Certificate(os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
