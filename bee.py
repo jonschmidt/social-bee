@@ -1,5 +1,4 @@
 import praw, operator
-from bittrex3.bittrex3 import Bittrex3
 from praw.models import MoreComments
 
 import firebase_admin
@@ -9,6 +8,7 @@ import re
 import datetime
 import os
 import requests  # To make HTTP requests
+import urllib.request, json
 
 # settings.py
 from os.path import join, dirname
@@ -37,13 +37,13 @@ def fchan(currencies):
     counts = {}
     b = get('https://boards.4chan.org/biz')
     for k in currencies.keys():
-        occurrences = sumOccurrences(b, currencies[k].get("CurrencyLong"))
-        counts[k] = occurrences + sumOccurrences(b, currencies[k].get("Currency"))
+        occurrences = sumOccurrences(b, currencies[k].get("name"))
+        counts[k] = occurrences + sumOccurrences(b, currencies[k].get("symbol"))
 
     for x in range(2, 10):
         b = get('https://boards.4chan.org/biz/' + str(x))
         for k in currencies.keys():
-            counts[k] = counts[k] + sumOccurrences(b, currencies[k].get("CurrencyLong")) + sumOccurrences(b, currencies[k].get("Currency"))
+            counts[k] = counts[k] + sumOccurrences(b, currencies[k].get("name")) + sumOccurrences(b, currencies[k].get("symbol"))
 
     return counts
 
@@ -61,12 +61,12 @@ def rddt(currencies):
             'flair:"Discussion"', 'new', 'lucene', 'day'):
         for k in currencies.keys():
             counts[k] = counts[k] + submission.selftext.count(
-                currencies[k].get("CurrencyLong")) + submission.selftext.count(currencies[k].get("Currency"))
+                currencies[k].get("name")) + submission.selftext.count(currencies[k].get("symbol"))
             for comment in submission.comments.list():
                 if isinstance(comment, MoreComments):
                     continue
                 counts[k] = counts[k] + comment.body.count(
-                    currencies[k].get("CurrencyLong")) + comment.body.count(currencies[k].get("Currency"))
+                    currencies[k].get("name")) + comment.body.count(currencies[k].get("symbol"))
 
     return counts
 
@@ -85,13 +85,11 @@ doc_ref = db.collection('social').document()
 reddit = praw.Reddit(client_id='I_VPG9ndTbFgCg',
                      client_secret='J8bahn7EHsyhVgV5MFBlER0OA9A',
                      user_agent='my user agent')
-
-bittrex = Bittrex3('78dfc9260fe84b38b9e5674cf497d7e3', '8b13052f04a14d95b950f17c03a0fb71')
-
 currencies = {}
-for value in bittrex.get_currencies().get("result"):
-    if len(value.get("Currency")) > 1:
-        currencies[value.get("Currency")] = value
+with urllib.request.urlopen("https://api.coinmarketcap.com/v1/ticker/?limit=200") as url:
+    data = json.loads(url.read().decode())
+    for coin in data:
+        currencies[coin["symbol"]] = coin
 
 print('***4chan***')
 fc = fchan(currencies)
