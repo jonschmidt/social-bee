@@ -27,4 +27,4 @@ requests==2.7.0
 rsa==3.4.2
 six==1.11.0
 update-checker==0.16
-urllib3==1.22
+urllib3==1.24.2
